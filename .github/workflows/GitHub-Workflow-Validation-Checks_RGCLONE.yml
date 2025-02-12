@@ -100,39 +100,15 @@ jobs:
           RGCLONE_API_ENDPOINT: ${{ secrets.RGCLONE_API_ENDPOINT }}
           RGCLONE_ACCESS_TOKEN: ${{ secrets.RGCLONE_ACCESS_TOKEN }}
         run: |
-          echo "Creating Data Container Proxy..."
-          RUNNER_TRACKING_ID="" && timeout 20s rgclone proxy dc "$DATA_CONTAINER_NAME" -p "$PROXY_PORT" &> proxy.log &  
-          PROXY_PID=$!
-          
-          # Wait briefly to check if proxy started successfully
-          sleep 3
-          if wait $PROXY_PID; then
-            echo "RGClone Proxy Enabled."
-            exit 0
-          else
-            echo "Proxy creation failed. Attempting cleanup..."
-            
-            # Kill existing RGClone processes
-            echo "Killing any pending RGClone processes..."
-            pkill -f rgclone || true  # Prevents failure if no process is found
-      
-            echo "Retrying Data Container Proxy creation..."
-            RUNNER_TRACKING_ID="" && rgclone proxy dc "$DATA_CONTAINER_NAME" -p "$PROXY_PORT" &> proxy.log &  
-            PROXY_PID=$!
-            
-            sleep 3
-            if wait $PROXY_PID; then
-              echo "RGClone Proxy successfully started after retry."
-              exit 0
-            else
-              echo "Error: Failed to create proxy even after cleanup. Exiting."
-              cat proxy.log  # Show logs for debugging
-              exit 1
-            fi
-          fi
-        
-        
-  
+          # Kill any pending RGClone processes
+          echo "Killing any pending RGClone processes"
+          pkill -f rgclone || true  # the `|| true` ensures the script doesn't fail if no process is found
+
+          # Create Data Container Proxy
+          echo "Creating Data Container Proxy"
+          RUNNER_TRACKING_ID="" && rgclone proxy dc "$DATA_CONTAINER_NAME" -p "$PROXY_PORT" &  # Run the proxy in the background
+
+          echo "RGClone Proxy Enabled"      
 
   Validate-Flyway-Pipeline:
     name: Run Flyway Pipeline
