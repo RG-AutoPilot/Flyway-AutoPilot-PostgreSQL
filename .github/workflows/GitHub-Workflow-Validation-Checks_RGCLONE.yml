@@ -140,10 +140,8 @@ jobs:
     if: failure()
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
         job: [setup-validation-environment, Validate-Flyway-Pipeline, cleanup]
-      max_attempts: 2  # Retries the whole workflow once
     steps:
       - name: Retry Failed Job
         run: |
