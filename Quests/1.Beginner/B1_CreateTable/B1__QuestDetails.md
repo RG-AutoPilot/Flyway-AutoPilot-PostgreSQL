@@ -1,8 +1,8 @@
 **Scenario**:
-You’ve been asked to store promotional campaigns in a new table under the `aales` schema.
+You’ve been asked to store promotional campaigns in a new table under the `sales` schema.
 
 **Objective**:
-Create a `aales.promotions` table with the following columns:
+Create a `sales.promotions` table with the following columns:
 - `promotion_id` (PK, INT)
 - `name` (VARCHAR(50))
 - `start_date` (DATE)
